@@ -3,7 +3,7 @@
   "publisher": "c0m1c5an5",
   "displayName": "Structured English",
   "description": "Syntax highlighting, error checking and auto-indent for Structured English pseudocode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -62,6 +62,7 @@
     "@types/vscode": "^1.75.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.1.1",
     "esbuild": "^0.28.1",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",

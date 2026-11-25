@@ -18,7 +18,7 @@ jobs:
     environment: release
     permissions:
       contents: read
-      id-token: write # required for Open VSX trusted publishing (OIDC)
+      id-token: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
@@ -39,8 +39,11 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build Extension
-        run: pnpm run package
+      - name: Package Extension
+        run: pnpm exec vsce package --no-dependencies --out extension.vsix
+
+      - name: Publish to Visual Studio Marketplace
+        run: pnpm exec vsce publish --no-dependencies --oidc --packagePath extension.vsix
 
       - name: Publish to Open VSX Registry
-        run: pnpm exec ovsx publish --no-dependencies --trusted-publishing
+        run: pnpm exec ovsx publish --no-dependencies --trusted-publishing --packagePath extension.vsix
