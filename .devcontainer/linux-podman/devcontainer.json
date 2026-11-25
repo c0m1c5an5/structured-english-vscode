@@ -1,0 +1,27 @@
+{
+  "name": "linux-podman",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24-bookworm@sha256:b067c4021d2760daeb24de2580973033064b74c26037b6acd9b2a3268c2d3259",
+  "runArgs": [
+    "--group-add=keep-groups",
+    "--userns=keep-id:uid=1000,gid=1000",
+    "--security-opt=label=disable"
+  ],
+  "containerUser": "node",
+  "remoteUser": "node",
+  "updateRemoteUserUID": false,
+  "mounts": ["source=claude,target=/home/node/.claude,type=volume"],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/home/node/.claude"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "editorconfig.editorconfig",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-typescript-next",
+        "github.vscode-github-actions"
+      ]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+# Make sure vim is set up
+IF vim is not installed
+    Install the vim package with dnf
+ELSE
+    Update vim with dnf
+END IF
+FOR EACH file IN ~/.vimrc AND ~/.viminfo
+    Copy the file to "backup"
+END FOR
