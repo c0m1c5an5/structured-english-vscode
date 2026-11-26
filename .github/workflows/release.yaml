@@ -43,7 +43,7 @@ jobs:
         run: pnpm exec vsce package --no-dependencies --out extension.vsix
 
       - name: Publish to Visual Studio Marketplace
-        run: pnpm exec vsce publish --no-dependencies --oidc --packagePath extension.vsix
+        run: pnpm exec vsce publish --no-dependencies --oidc --skip-duplicate --packagePath extension.vsix
 
       - name: Publish to Open VSX Registry
-        run: pnpm exec ovsx publish --no-dependencies --trusted-publishing --packagePath extension.vsix
+        run: pnpm exec ovsx publish --no-dependencies --trusted-publishing --skip-duplicate --packagePath extension.vsix
