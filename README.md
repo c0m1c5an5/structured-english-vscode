@@ -13,9 +13,9 @@ END IF
 
 ## Features
 
-- **Highlighting**: keywords (shown in bold), operators, conditions, steps,
-  literals (`` `code` ``, `"quoted text"`, URLs and paths) and comments. It uses
-  semantic tokens, so every theme colors it.
+- **Highlighting**: keywords, operators, conditions, steps,
+  literals (`` `code` ``, `"quoted text"`, URLs and paths) and comments, with
+  standard TextMate scopes, so every theme colors it.
 - **Error checking**: reports unclosed blocks, unmatched closers, missing or
   extra text after keywords, branches after `ELSE`/`OTHERWISE`, and wrong
   indentation.
@@ -26,6 +26,19 @@ END IF
 - **Comment toggling** with `#`.
 
 Files ending in `.se` open as Structured English.
+
+To show keywords and operators in bold, add this to your settings:
+
+```json
+"editor.tokenColorCustomizations": {
+  "textMateRules": [
+    {
+      "scope": ["keyword.control.structured-english", "keyword.operator.wordlike.structured-english"],
+      "settings": { "fontStyle": "bold" }
+    }
+  ]
+}
+```
 
 ## Language
 

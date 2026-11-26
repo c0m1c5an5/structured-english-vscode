@@ -63,29 +63,55 @@ function waitForDiagnostics(
   });
 }
 
-/** The semantic token types of a document, decoded through its legend, in order. */
-async function tokenTypes(doc: vscode.TextDocument): Promise<string[]> {
-  const legend =
-    await vscode.commands.executeCommand<vscode.SemanticTokensLegend>(
-      "vscode.provideDocumentSemanticTokensLegend",
-      doc.uri,
-    );
-  const tokens = await vscode.commands.executeCommand<vscode.SemanticTokens>(
-    "vscode.provideDocumentSemanticTokens",
-    doc.uri,
+/** Polls `condition` until it holds or `timeoutMs` passes; resolves with its last value. */
+async function eventually(
+  condition: () => boolean,
+  timeoutMs = 10_000,
+): Promise<boolean> {
+  const deadline = Date.now() + timeoutMs;
+  while (!condition() && Date.now() < deadline) {
+    await new Promise<void>((resolve) => setTimeout(resolve, 50));
+  }
+  return condition();
+}
+
+interface SyntaxToken {
+  /** The text of the token. */
+  c: string;
+  /** Its TextMate scopes, outermost first, separated by spaces. */
+  t: string;
+}
+
+/**
+ * How VS Code's TextMate engine colors a file: [text, innermost scope] for each
+ * token that is not whitespace. Uses the internal command that VS Code's own
+ * grammar tests use.
+ */
+async function syntaxTokens(uri: vscode.Uri): Promise<[string, string][]> {
+  const tokens = await vscode.commands.executeCommand<SyntaxToken[]>(
+    "_workbench.captureSyntaxTokens",
+    uri,
   );
-  // Each token is 5 integers; the 4th is the index of its type in the legend.
-  return Array.from(
-    { length: tokens.data.length / 5 },
-    (_, i) => legend.tokenTypes[tokens.data[i * 5 + 3]],
-  );
+  return tokens
+    .filter((token) => token.c.trim() !== "")
+    .map((token) => [token.c.trim(), token.t.split(" ").at(-1) ?? ""]);
 }
 
 suite("Structured English extension", () => {
+  // Opening a Structured English file must activate the extension by itself.
   suiteSetup(async () => {
     const ext = vscode.extensions.getExtension(EXTENSION_ID);
     assert.ok(ext, `Extension ${EXTENSION_ID} not found`);
-    await ext.activate();
+    assert.ok(!ext.isActive, "extension is active before any .se file is open");
+    const folder = vscode.workspace.workspaceFolders?.[0];
+    assert.ok(folder, "test workspace folder is open");
+    await vscode.workspace.openTextDocument(
+      path.join(folder.uri.fsPath, "example.se"),
+    );
+    assert.ok(
+      await eventually(() => ext.isActive),
+      "opening a .se file did not activate the extension",
+    );
   });
 
   teardown(() =>
@@ -101,7 +127,6 @@ suite("Structured English extension", () => {
     assert.strictEqual(doc.languageId, LANGUAGE);
     // The sample file is well formed.
     await vscode.window.showTextDocument(doc);
-    assert.strictEqual((await tokenTypes(doc))[0], "comment");
     assert.deepStrictEqual(vscode.languages.getDiagnostics(doc.uri), []);
   });
 
@@ -142,25 +167,29 @@ suite("Structured English extension", () => {
     assert.deepStrictEqual(vscode.languages.getDiagnostics(document.uri), []);
   });
 
-  test("provides semantic tokens with standard types", async () => {
-    const { document } = await open('IF a AND "b"\n    Run ~/x.sh\nEND IF\n');
-    assert.deepStrictEqual(await tokenTypes(document), [
-      "keyword",
-      "parameter",
-      "keyword",
-      "parameter",
-      "string", // IF a AND "b"
-      "function",
-      "string", // Run ~/x.sh
-      "keyword", // END IF
+  test("colors .se files with the grammar", async () => {
+    const folder = vscode.workspace.workspaceFolders?.[0];
+    assert.ok(folder, "test workspace folder is open");
+    const uri = vscode.Uri.file(path.join(folder.uri.fsPath, "example.se"));
+    const tokens = await syntaxTokens(uri);
+    const scope = (name: string): string => `${name}.structured-english`;
+    assert.deepStrictEqual(tokens.slice(0, 3), [
+      ["# Make sure vim is set up", scope("comment.line")],
+      ["IF", scope("keyword.control")],
+      ["vim is not installed", scope("variable.parameter")],
     ]);
-  });
-
-  test("semantic tokens follow edits", async () => {
-    const editor = await open("x\n");
-    assert.deepStrictEqual(await tokenTypes(editor.document), ["function"]);
-    await replaceAll(editor, "# note\n");
-    assert.deepStrictEqual(await tokenTypes(editor.document), ["comment"]);
+    assert.deepStrictEqual(tokens.slice(-10), [
+      ["FOR", scope("keyword.control")],
+      ["EACH", scope("keyword.operator.wordlike")],
+      ["file", scope("variable.parameter")],
+      ["IN", scope("keyword.operator.wordlike")],
+      ["~/.vimrc", scope("string.other.literal")],
+      ["AND", scope("keyword.operator.wordlike")],
+      ["~/.viminfo", scope("string.other.literal")],
+      ["Copy the file to", scope("entity.name.function")],
+      ['"backup"', scope("string.other.literal")],
+      ["END FOR", scope("keyword.control")],
+    ]);
   });
 
   test("highlights matching block keywords", async () => {

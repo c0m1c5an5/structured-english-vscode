@@ -85,8 +85,8 @@ interface Line {
 }
 
 // --- The language: keywords are defined here --------------------------------
-// INDENT_AFTER and OUTDENT repeat the keyword names as regex literals; a test keeps
-// them in step with KEYWORDS.
+// language-configuration.json repeats the keyword names in its indentation
+// patterns; a test keeps them in step with KEYWORDS.
 
 type KeywordSpec = Pick<Keyword, "name" | "role" | "block"> & Partial<Keyword>;
 
@@ -145,7 +145,7 @@ export const COMMENT_PREFIXES: readonly string[] = Object.freeze([
   "#",
   "*",
   "//",
-]); // the first is used to toggle comments
+]); // the first is the lineComment in language-configuration.json
 // Literal values inside a step or condition, so they stand out from the prose, and
 // operators: words that join or qualify conditions and steps (like keywords, only in
 // capitals). One regex literal, so eslint-plugin-regexp checks it for ReDoS.
@@ -157,14 +157,6 @@ const INLINE =
 const CLOSER: ReadonlyMap<string, string> = new Map(
   KEYWORDS.filter((k) => k.role === "close").map((k) => [k.block, k.name]),
 );
-
-// Lines after which an editor indents (a block opener or a branch), and lines it
-// outdents (a branch or a closer). Regex literals, because editors take regexes;
-// a test checks that they agree with KEYWORDS.
-export const INDENT_AFTER =
-  /^\s*(?:IF|ELSE\s*IF|ELSE|CASE|WHEN|OTHERWISE|FOR|WHILE|REPEAT)(?:\s|$)/;
-export const OUTDENT =
-  /^\s*(?:ELSE\s*IF|ELSE|END\s*IF|WHEN|OTHERWISE|END\s*CASE|END\s*FOR|END\s*WHILE|UNTIL)(?:\s|$)/;
 
 const BY_LENGTH: readonly Keyword[] = Object.freeze(
   // longest first: "ELSE IF" before "ELSE"

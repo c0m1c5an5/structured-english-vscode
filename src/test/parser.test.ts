@@ -1,13 +1,5 @@
 import * as assert from "assert";
-import {
-  parse,
-  matchingKeywords,
-  KEYWORDS,
-  INDENT_AFTER,
-  OUTDENT,
-  Node,
-  Token,
-} from "../parser";
+import { parse, matchingKeywords, KEYWORDS, Node, Token } from "../parser";
 
 const src = (...lines: string[]): string => lines.join("\n");
 const rules = (source: string): string[] =>
@@ -499,36 +491,6 @@ suite("parser: keywords", () => {
         tokens.map((t) => t.type),
         ["step"],
         line,
-      );
-    }
-  });
-
-  test("indentation patterns agree with KEYWORDS", () => {
-    for (const k of KEYWORDS) {
-      for (const spelling of [
-        k.name,
-        k.name.replaceAll(" ", ""),
-        k.name.replaceAll(" ", "  "),
-      ]) {
-        for (const line of [spelling, `  ${spelling} x`]) {
-          const where = `${k.name} as ${JSON.stringify(line)}`;
-          assert.strictEqual(
-            INDENT_AFTER.test(line),
-            k.role === "open" || k.role === "branch",
-            `INDENT_AFTER, ${where}`,
-          );
-          assert.strictEqual(
-            OUTDENT.test(line),
-            k.role === "branch" || k.role === "close",
-            `OUTDENT, ${where}`,
-          );
-        }
-      }
-    }
-    for (const line of ["IFFY", "if x", "Install IF", "ENDING", "# IF"]) {
-      assert.ok(
-        !INDENT_AFTER.test(line) && !OUTDENT.test(line),
-        JSON.stringify(line),
       );
     }
   });

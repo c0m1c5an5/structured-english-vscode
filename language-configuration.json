@@ -1,0 +1,9 @@
+{
+  "comments": {
+    "lineComment": "#"
+  },
+  "indentationRules": {
+    "increaseIndentPattern": "^\\s*(?:IF|ELSE\\s*IF|ELSE|CASE|WHEN|OTHERWISE|FOR|WHILE|REPEAT)(?:\\s|$)",
+    "decreaseIndentPattern": "^\\s*(?:ELSE\\s*IF|ELSE|END\\s*IF|WHEN|OTHERWISE|END\\s*CASE|END\\s*FOR|END\\s*WHILE|UNTIL)(?:\\s|$)"
+  }
+}

@@ -3,7 +3,7 @@
   "publisher": "c0m1c5an5",
   "displayName": "Structured English",
   "description": "Syntax highlighting, error checking and auto-indent for Structured English pseudocode",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -22,6 +22,9 @@
     "url": "https://github.com/c0m1c5an5/structured-english-vscode"
   },
   "main": "./dist/extension.js",
+  "activationEvents": [
+    "onLanguage:structured-english"
+  ],
   "contributes": {
     "languages": [
       {
@@ -32,14 +35,17 @@
         ],
         "extensions": [
           ".se"
-        ]
+        ],
+        "configuration": "./language-configuration.json"
       }
     ],
-    "configurationDefaults": {
-      "[structured-english]": {
-        "editor.semanticHighlighting.enabled": true
+    "grammars": [
+      {
+        "language": "structured-english",
+        "scopeName": "source.structured-english",
+        "path": "./syntaxes/structured-english.tmLanguage.json"
       }
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",
@@ -73,7 +79,9 @@
     "ovsx": "^1.4.0",
     "prettier": "^3.10.1",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1"
+    "typescript-eslint": "^8.61.1",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.3.2"
   },
   "overrides": {
     "diff": "^8.0.4",

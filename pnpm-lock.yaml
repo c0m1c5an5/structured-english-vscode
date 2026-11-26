@@ -59,6 +59,12 @@ importers:
       typescript-eslint:
         specifier: ^8.61.1
         version: 8.62.0(eslint@10.5.0(supports-color@8.1.1))(supports-color@8.1.1)(typescript@6.0.3)
+      vscode-oniguruma:
+        specifier: ^2.0.1
+        version: 2.0.1
+      vscode-textmate:
+        specifier: ^9.3.2
+        version: 9.3.2
 
 packages:
 
@@ -2620,6 +2626,12 @@ packages:
   version-range@4.15.0:
     resolution: {integrity: sha512-Ck0EJbAGxHwprkzFO966t4/5QkRuzh+/I1RxhLgUKKwEn+Cd8NwM60mE3AqBZg5gYODoXW0EFsQvbZjRlvdqbg==}
     engines: {node: '>=4'}
+
+  vscode-oniguruma@2.0.1:
+    resolution: {integrity: sha512-poJU8iHIWnC3vgphJnrLZyI3YdqRlR27xzqDmpPXYzA93R4Gk8z7T6oqDzDoHjoikA2aS82crdXFkjELCdJsjQ==}
+
+  vscode-textmate@9.3.2:
+    resolution: {integrity: sha512-n2uGbUcrjhUEBH16uGA0TvUfhWwliFZ1e3+pTjrkim1Mt7ydB41lV08aUvsi70OlzDWp6X7Bx3w/x3fAXIsN0Q==}
 
   walk-up-path@4.0.0:
     resolution: {integrity: sha512-3hu+tD8YzSLGuFYtPRb48vdhKMi0KQV5sn+uWr8+7dMEq/2G/dtLrdDinkLjqq5TIbIBjYJ4Ax/n3YiaW7QM8A==}
@@ -5539,6 +5551,10 @@ snapshots:
   validate-npm-package-name@7.0.2: {}
 
   version-range@4.15.0: {}
+
+  vscode-oniguruma@2.0.1: {}
+
+  vscode-textmate@9.3.2: {}
 
   walk-up-path@4.0.0: {}
 
